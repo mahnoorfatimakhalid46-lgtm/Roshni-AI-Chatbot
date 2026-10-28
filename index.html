@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roshni AI - Premium Assistant</title>
+    <!-- Marked.js for Markdown Formatting -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 1. Left Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                🔥 <span>Roshni AI</span>
+            </div>
+
+            <button class="new-chat-btn" onclick="startNewChat()">
+                <span>＋</span> New Chat
+            </button>
+
+            <div class="search-box">
+                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                <input type="text" id="searchInput" placeholder="Search chats..." oninput="filterHistory(this.value)">
+            </div>
+
+            <div class="sidebar-sections">
+                <!-- Chat History Grouped -->
+                <div class="history-group">
+                    <div class="section-title">Today</div>
+                    <div id="todayHistory">
+                        <div class="history-item" onclick="loadSampleChat('Welcome Chat')">💬 Roshni AI Setup</div>
+                    </div>
+                </div>
+
+                <div class="history-group">
+                    <div class="section-title">Yesterday</div>
+                    <div class="history-item">💬 Frontend Layout Design</div>
+                    <div class="history-item">💬 JavaScript API Integration</div>
+                </div>
+
+                <!-- File Library -->
+                <div>
+                    <div class="section-title">File Library</div>
+                    <div class="library-item">📁 Project_Specs.pdf</div>
+                    <div class="library-item">📁 Notes_Summary.docx</div>
+                </div>
+
+                <!-- AI Tools Section -->
+                <div>
+                    <div class="section-title">AI Tools</div>
+                    <div class="tool-item" onclick="triggerTool('Email Writer')">✉️ Email Writer</div>
+                    <div class="tool-item" onclick="triggerTool('Content Writer')">✍️ Content Writer</div>
+                    <div class="tool-item" onclick="triggerTool('Document Summarizer')">📊 Doc Summarizer</div>
+                    <div class="tool-item" onclick="triggerTool('Coding Assistant')">💻 Coding Assistant</div>
+                    <div class="tool-item" onclick="triggerTool('Text Rewriter')">🔄 Text Rewriter</div>
+                </div>
+            </div>
+
+            <!-- User Profile & Settings -->
+            <div class="user-profile">
+                <div class="avatar-circle">MF</div>
+                <div class="user-info">
+                    <div class="name">Mahnoor Fatima</div>
+                    <div class="status">Free Tier • Pro UI</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 2. Main Chat Area -->
+        <main class="main-chat">
+            <header class="chat-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="tool-icon-btn" onclick="toggleSidebar()" style="font-size: 20px;">☰</button>
+                    <h2>Roshni AI Assistant</h2>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted);">Gemini 2.5 Flash Connected</div>
+            </header>
+
+            <div class="chat-body" id="chatBody">
+                <!-- Welcome Screen -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <h1>Hello, I'm Roshni.</h1>
+                    <p>Clarity for every question. How can I help you accelerate your project today?</p>
+                    
+                    <div class="suggestion-grid">
+                        <div class="suggestion-card" onclick="useSuggestion('Write an professional email for university admission inquiry.')">
+                            <h4>Writing</h4>
+                            <span>Draft formal emails & letters</span>
+                        </div>
+                        <div class="suggestion-card" onclick="useSuggestion('Explain how CSS flexbox works with a quick code example.')">
+                            <h4>Coding</h4>
+                            <span>Debug & write clean code snippets</span>
+                        </div>
+                        <div class="suggestion-card" onclick="useSuggestion('Summarize the key principles of modern web design.')">
+                            <h4>Summarization</h4>
+                            <span>Condense long articles or documents</span>
+                        </div>
+                        <div class="suggestion-card" onclick="useSuggestion('Analyze the structure of a professional research proposal.')">
+                            <h4>Document Analysis</h4>
+                            <span>Extract insights from uploaded files</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. File Upload UI Preview Bar -->
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <div class="file-preview-bar" id="filePreviewBar">
+                    <div class="file-info">
+                        <span>📎</span> <span id="fileNameDisplay">document.pdf</span> (Ready for context)
+                    </div>
+                    <span class="remove-file" onclick="removeAttachedFile()">✕</span>
+                </div>
+            </div>
+
+            <!-- 4. Input Area -->
+            <div class="chat-input-container">
+                <div class="input-box-wrapper">
+                    <textarea id="userInput" placeholder="Ask Roshni anything or upload files..." rows="1" onkeydown="handleKeyPress(event)" oninput="autoResize(this)"></textarea>
+                    
+                    <div class="input-tools">
+                        <div class="tool-icons">
+                            <!-- Hidden File Input -->
+                            <input type="file" id="fileInput" style="display: none;" accept=".pdf,.docx,.txt,image/*" onchange="handleFileSelect(event)">
+                            <button class="tool-icon-btn" title="Upload PDF, DOCX, TXT, Images" onclick="document.getElementById('fileInput').click()">📎</button>
+                            <button class="tool-icon-btn" id="micBtn" title="Voice Input" onclick="toggleVoiceInput()">🎙️</button>
+                        </div>
+                        <button class="send-btn" onclick="sendMessage()">➔</button>
+                    </div>
+                </div>
+                <div class="disclaimer-text">Roshni AI can make mistakes. Verify important info. Backend file parsing requires server integration.</div>
+            </div>
+        </main>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
